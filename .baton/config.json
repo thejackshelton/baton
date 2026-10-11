@@ -5,7 +5,7 @@
   "metrics": [
     {
       "name": "Tests passing",
-      "command": "node --test 'test/*.test.mjs' 2>&1 | grep '^# pass' | cut -d' ' -f3"
+      "command": "node --test --test-reporter=tap 'test/*.test.mjs' 2>&1 | grep '^# pass' | cut -d' ' -f3"
     }
   ],
   "links": [
