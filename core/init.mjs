@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { BATON_DIR, DEFAULT_CONFIG, loadConfig } from "./config.mjs";
 import { upsertBlock } from "./markers.mjs";
+import { remoteDefaultBranch } from "./threads.mjs";
 
 export const PKG_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const TEMPLATES = join(PKG_ROOT, "templates");
@@ -36,7 +37,12 @@ export async function init(root, { adapters = ["claude-code"] } = {}) {
   if (existsSync(workflowPath) && !readFileSync(workflowPath, "utf8").startsWith(MANAGED)) {
     log.push(`skipped ${WORKFLOW} (exists and is not managed by baton)`);
   } else {
-    write(WORKFLOW, template("github/baton-state.yml").replace("__NODE__", nodeSetting(root)));
+    write(
+      WORKFLOW,
+      template("github/baton-state.yml")
+        .replace("__NODE__", nodeSetting(root))
+        .replace("__BRANCHES__", pushBranches(root)),
+    );
   }
 
   const config = loadConfig(root);
@@ -68,6 +74,14 @@ function vendorRuntime(root) {
     cpSync(join(PKG_ROOT, dir), join(lib, dir), { recursive: true });
   }
   cpSync(join(PKG_ROOT, "package.json"), join(lib, "package.json"));
+}
+
+// Only the default branch's pushes refresh state. If it can't be detected
+// yet (no remote), cover the usual names; the job's `if` filters the rest.
+function pushBranches(root) {
+  const configured = existsSync(join(root, BATON_DIR, "config.json")) ? loadConfig(root).defaultBranch : null;
+  const branch = configured ?? remoteDefaultBranch(root);
+  return (branch ? [branch] : ["main", "master"]).map((b) => JSON.stringify(b)).join(", ");
 }
 
 // Reuse the repo's own Node pin so setup scripts that check it still pass.

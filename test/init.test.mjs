@@ -38,6 +38,7 @@ test("init installs core + Claude Code adapter and preserves what the repo alrea
   const workflow = read(work, ".github/workflows/baton-state.yml");
   assert.match(workflow, /node-version-file: \.nvmrc/);
   assert.match(workflow, /baton\.mjs state --publish --setup/);
+  assert.match(workflow, /branches: \["main", "baton\/claim\/\*\*"\]/, "push trigger limited to the detected default branch");
 });
 
 test("re-running init is idempotent and keeps owner edits", () => {

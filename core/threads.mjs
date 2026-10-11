@@ -21,7 +21,7 @@ export function missingThread(cwd, { defaultBranch = null, remote = "origin", ti
   return hasWork && !hasThread ? { base: branch } : null;
 }
 
-function remoteDefaultBranch(cwd, remote, timeout) {
+export function remoteDefaultBranch(cwd, remote = "origin", timeout = 5_000) {
   const local = tryGit(cwd, ["symbolic-ref", "--short", `refs/remotes/${remote}/HEAD`]);
   if (local) return local.slice(remote.length + 1);
   const out = tryGit(cwd, ["ls-remote", "--symref", remote, "HEAD"], { timeout });

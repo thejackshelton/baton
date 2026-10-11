@@ -6,7 +6,7 @@ name: baton state
 on:
   # The default branch, plus claim branches (baton/claim/<issue>).
   push:
-    branches-ignore: ["baton/state"]
+    branches: ["claude/project-sharing-accounts-dbpotp", "baton/claim/**"]
   pull_request:
     types: [opened, reopened, closed, edited, ready_for_review, converted_to_draft]
   issues:
@@ -20,12 +20,13 @@ permissions:
   pull-requests: read
   issues: read
 
-concurrency:
-  group: baton-state
-  cancel-in-progress: true
-
 jobs:
   state:
+    # At the job level, so runs that end up skipped never cancel a real one.
+    # A newer run waits for the current one rather than cancelling it.
+    concurrency:
+      group: baton-state
+      cancel-in-progress: false
     if: >-
       (github.event_name != 'push' || github.ref_name == github.event.repository.default_branch || startsWith(github.ref_name, 'baton/claim/')) &&
       (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
