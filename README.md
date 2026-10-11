@@ -22,9 +22,16 @@ tool, so other harnesses can be added as adapters.
 AGENTS.md             a marked baton block with the rules agents follow
 ```
 
-Plus, for Claude Code: a `SessionStart` hook in `.claude/settings.json` that
-prints the instructions and current state into every new session, and a
-`CLAUDE.md` that points at `AGENTS.md`.
+Plus, for Claude Code, two hooks in `.claude/settings.json` and a
+`CLAUDE.md` that points at `AGENTS.md`:
+
+- `SessionStart` prints the instructions and current state into every new
+  session.
+- `Stop` keeps chat-only context from piling up. When a turn ends on a work
+  branch that has commits but no `.baton/threads/` summary, it sends Claude
+  back once to write one. It never blocks twice in a row, does nothing on the
+  default branch, and lets the session stop whenever git can't tell. Turn it
+  off with `"threadReminder": false`.
 
 **`state.md` never lands on your default branch.** The Action regenerates it
 on merges, PR changes, issue changes and every 6 hours, then publishes it as
@@ -37,7 +44,7 @@ timestamp would change, nothing is pushed.
 From the root of the repo you want to share:
 
 ```sh
-npx github:thejackshelton/baton init
+npx github:thejackshelton/baton#main init
 ```
 
 Then:
@@ -63,6 +70,7 @@ workflow uses that pin.
   "metrics": [{ "name": "CSS support", "command": "node scripts/support.mjs --summary" }],
   "links": [{ "label": "Milestone board", "path": "docs/goals/state.yaml" }],
   "nextLabels": ["next"],
+  "threadReminder": true,
   "recentlyLanded": 10,
   "recentThreads": 5,
   "claiming": { "enabled": false, "staleHours": 48 }

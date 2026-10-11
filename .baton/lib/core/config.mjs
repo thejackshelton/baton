@@ -17,6 +17,10 @@ export const DEFAULT_CONFIG = {
   // Pointers to docs that already track the project, so state.md links
   // instead of duplicating: [{ "label": "Goal", "path": "docs/goal.md" }].
   links: [],
+  // Harness adapters that support it (Claude Code: a Stop hook) remind the
+  // agent to write a .baton/threads/ summary before finishing a turn on a
+  // branch with committed work and no summary.
+  threadReminder: true,
   recentlyLanded: 10,
   recentThreads: 5,
   // Issues with any of these labels are listed under "Next up".
