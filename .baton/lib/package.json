@@ -1,0 +1,21 @@
+{
+  "name": "baton",
+  "version": "0.1.0",
+  "description": "Shared project state for coding agents, through your repo.",
+  "type": "module",
+  "bin": {
+    "baton": "bin/baton.mjs"
+  },
+  "files": [
+    "bin",
+    "core",
+    "adapters",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node --test 'test/*.test.mjs'"
+  }
+}

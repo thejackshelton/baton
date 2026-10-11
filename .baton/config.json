@@ -1,0 +1,26 @@
+{
+  "stateBranch": "baton/state",
+  "defaultBranch": null,
+  "setup": null,
+  "metrics": [
+    {
+      "name": "Tests passing",
+      "command": "node --test 'test/*.test.mjs' 2>&1 | grep '^# pass' | cut -d' ' -f3"
+    }
+  ],
+  "links": [
+    {
+      "label": "README",
+      "path": "README.md"
+    }
+  ],
+  "recentlyLanded": 10,
+  "recentThreads": 5,
+  "nextLabels": [
+    "next"
+  ],
+  "claiming": {
+    "enabled": false,
+    "staleHours": 48
+  }
+}
