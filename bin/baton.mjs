@@ -84,7 +84,11 @@ async function main() {
     case "release": {
       requireClaiming();
       const issue = issueArg();
-      release(cwd, { issue });
+      if (!release(cwd, { issue }).ok) {
+        console.error(`#${issue} is not claimed.`);
+        process.exitCode = 1;
+        return;
+      }
       console.log(`released #${issue}`);
       return;
     }

@@ -87,12 +87,14 @@ node .baton/lib/bin/baton.mjs release 12
 node .baton/lib/bin/baton.mjs claims
 ```
 
-A claim is a `baton/claim/<issue>` branch. Git refuses to create a branch that
-already exists, so only one agent can win a claim, and claiming needs nothing
-beyond normal push access: no API token. State lists current claims and flags
-any older than `staleHours`. Some hosted agent environments only let a session
-push its own working branch. If yours does, `claim` fails with the push error
-instead of silently doing nothing.
+A claim is a `baton/claim/<issue>` branch whose tip commit names the holder.
+Claiming and releasing each push one commit on top of the current tip, so if
+two agents race, the second push is rejected as a non-fast-forward and only
+one wins. It needs nothing beyond plain push access: no API token, and no
+branch deletes or force-pushes, which some hosted agent environments block
+(Claude Code cloud sessions included). State lists current claims and flags
+any older than `staleHours`. If an environment can't push the branch at all,
+`claim` fails with the push error instead of silently doing nothing.
 
 ## What baton doesn't do
 

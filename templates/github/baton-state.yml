@@ -4,15 +4,13 @@
 name: baton state
 
 on:
+  # The default branch, plus claim branches (baton/claim/<issue>).
   push:
-    branches-ignore: ["baton/**"]
+    branches-ignore: ["baton/state"]
   pull_request:
     types: [opened, reopened, closed, edited, ready_for_review, converted_to_draft]
   issues:
     types: [opened, reopened, closed, edited, labeled, unlabeled]
-  # Claim branches (baton/claim/<issue>) being created or deleted.
-  create:
-  delete:
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
@@ -29,9 +27,8 @@ concurrency:
 jobs:
   state:
     if: >-
-      (github.event_name != 'push' || github.ref_name == github.event.repository.default_branch) &&
-      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
-      ((github.event_name != 'create' && github.event_name != 'delete') || startsWith(github.event.ref, 'baton/claim/'))
+      (github.event_name != 'push' || github.ref_name == github.event.repository.default_branch || startsWith(github.ref_name, 'baton/claim/')) &&
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
